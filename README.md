@@ -1,2 +1,2 @@
-# game-off-2022
+# What are you? Chicken?
 Repository for Game Off 2022

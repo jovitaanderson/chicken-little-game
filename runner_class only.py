@@ -21,34 +21,21 @@ bg_music = pygame.mixer.Sound('audio/music.wav')
 bg_music.set_volume(0.1)
 bg_music.play(loops = -1)
 
-
-# sky_surface = pygame.image.load('graphics/plx-1.png').convert()
 sky_surface = pygame.transform.scale(pygame.image.load('graphics/plx-1.png').convert_alpha(),(800, 400))
-#para1_surface = pygame.transform.scale(pygame.image.load('graphics/plx-2.png').convert_alpha(),(800, 400))
-#para2_surface = pygame.transform.scale(pygame.image.load('graphics/plx-3.png').convert_alpha(),(800, 400))
-#para3_surface = pygame.transform.scale(pygame.image.load('graphics/plx-4.png').convert_alpha(),(800, 400))
 ground_surface = pygame.image.load('graphics/ground-1.png').convert_alpha()
 ground_width = ground_surface.get_width()
 ground_height = ground_surface.get_height()
-#bg_rect_list = [para1_surface.get_rect(topright = (0,0))]
 
 class Player(pygame.sprite.Sprite):
 	def __init__(self):
 		super().__init__()
-		player_walk_1 = pygame.transform.scale(pygame.image.load('graphics/player/ChikBoy_run1.png').convert_alpha(),(84, 84))
-		player_walk_2 = pygame.transform.scale(pygame.image.load('graphics/player/ChikBoy_run2.png').convert_alpha(),(84, 84))
-		player_walk_3 = pygame.transform.scale(pygame.image.load('graphics/player/ChikBoy_run3.png').convert_alpha(),(84, 84))
-		player_walk_4 = pygame.transform.scale(pygame.image.load('graphics/player/ChikBoy_run4.png').convert_alpha(),(84, 84))
-		player_walk_5 = pygame.transform.scale(pygame.image.load('graphics/player/ChikBoy_run5.png').convert_alpha(),(84, 84))
-		player_walk_6 = pygame.transform.scale(pygame.image.load('graphics/player/ChikBoy_run6.png').convert_alpha(),(84, 84))
-		player_walk_7 = pygame.transform.scale(pygame.image.load('graphics/player/ChikBoy_run7.png').convert_alpha(),(84, 84))
-		player_walk_8 = pygame.transform.scale(pygame.image.load('graphics/player/ChikBoy_run8.png').convert_alpha(),(84, 84))
-		player_walk_9 = pygame.transform.scale(pygame.image.load('graphics/player/ChikBoy_run9.png').convert_alpha(),(84, 84))
-		player_walk_10 = pygame.transform.scale(pygame.image.load('graphics/player/ChikBoy_run10.png').convert_alpha(),(84, 84))
+		#to store character images
+		self.player_walk = []
+		for i in range(1,11):
+			player_walk_image = pygame.transform.scale(pygame.image.load(f"graphics/player/ChikBoy_run{i}.png").convert_alpha(),(84, 84))
+			self.player_walk.append(player_walk_image)
 
-		self.player_walk = [player_walk_1, player_walk_2, player_walk_3, player_walk_4, player_walk_5, player_walk_6, player_walk_7, player_walk_8, player_walk_9, player_walk_10]
 		self.player_index = 0
-		#self.player_jump = pygame.image.load('graphics/player/ChikBoy_jump.png').convert_alpha()
 		self.player_jump = pygame.transform.scale(pygame.image.load('graphics/player/ChikBoy_jump.png').convert_alpha(),(84, 84))
 		
 
@@ -74,13 +61,11 @@ class Player(pygame.sprite.Sprite):
 	def animation_state(self):
 		if self.rect.bottom < (SCREEN_HEIGHT - ground_height): 
 			self.image = self.player_jump
-			#self.image = pygame.transform.scale(self.player_jump,(84, 84))
 
 		else:
 			self.player_index += 0.3
 			if self.player_index >= len(self.player_walk):self.player_index = 0
 			self.image = self.player_walk[int(self.player_index)]
-			#self.image = pygame.transform.scale(self.player_walk[int(self.player_index)],(84, 84))
 
 	def update(self):
 		self.player_input()
@@ -139,14 +124,14 @@ def collision_sprite():
 	else: return True
 
 
-#to store parallax images
+#to store parallax background
 bg_images = []
 for i in range(1,6):
 	bg_image = pygame.transform.scale(pygame.image.load(f"graphics/plx-{i}.png").convert_alpha(),(800, 400))
 	bg_images.append(bg_image)
 bg_width = bg_images[0].get_width()
 
-#to draw para background
+#to draw parallax background
 def draw_bg():
   #redraw image 5 times beside each other
   for x in range(5):
@@ -197,18 +182,8 @@ while True:
 
 		draw_bg()
 		draw_ground()
-		#if len(bg_rect_list) <= 3:
-		#	bg_rect_list.append(para1_surface.get_rect(topright = (0,0)))
 
-		
-		#screen.blit(sky_surface,(0,0))
-		#screen.blit(para1_surface,(bg_x,0))
 		bg_x += 0.5
-		#screen.blit(para2_surface,(bg2_x,0))
-		#bg2_x -= 0.8
-		#screen.blit(para3_surface,(bg3_x,0))
-		#bg3_x -= 1
-		#screen.blit(ground_surface,(0,300))
 		score = display_score()
 		
 		player.draw(screen)
@@ -216,8 +191,6 @@ while True:
 
 		obstacle_group.draw(screen)
 		obstacle_group.update()
-
-		#bg_rect_list = bg_movement(bg_rect_list)
 
 		game_active = collision_sprite()
 		

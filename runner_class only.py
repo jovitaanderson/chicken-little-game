@@ -2,6 +2,36 @@ import pygame
 from sys import exit
 from random import randint, choice
 
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 400
+FPS = 60
+
+pygame.init()
+clock = pygame.time.Clock()
+screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
+pygame.display.set_caption('Chicken Little')
+test_font = pygame.font.Font('font/Pixeltype.ttf', 50)
+game_active = False
+
+start_time = 0
+score = 0
+bg_x = 0
+
+bg_music = pygame.mixer.Sound('audio/music.wav')
+bg_music.set_volume(0.1)
+bg_music.play(loops = -1)
+
+
+# sky_surface = pygame.image.load('graphics/plx-1.png').convert()
+sky_surface = pygame.transform.scale(pygame.image.load('graphics/plx-1.png').convert_alpha(),(800, 400))
+#para1_surface = pygame.transform.scale(pygame.image.load('graphics/plx-2.png').convert_alpha(),(800, 400))
+#para2_surface = pygame.transform.scale(pygame.image.load('graphics/plx-3.png').convert_alpha(),(800, 400))
+#para3_surface = pygame.transform.scale(pygame.image.load('graphics/plx-4.png').convert_alpha(),(800, 400))
+ground_surface = pygame.image.load('graphics/ground-1.png').convert_alpha()
+ground_width = ground_surface.get_width()
+ground_height = ground_surface.get_height()
+#bg_rect_list = [para1_surface.get_rect(topright = (0,0))]
+
 class Player(pygame.sprite.Sprite):
 	def __init__(self):
 		super().__init__()
@@ -23,7 +53,7 @@ class Player(pygame.sprite.Sprite):
 		
 
 		self.image = self.player_walk[self.player_index]
-		self.rect = self.image.get_rect(midbottom = (80,300))
+		self.rect = self.image.get_rect(midbottom = (80,SCREEN_HEIGHT - ground_height))
 		self.gravity = 0
 
 		#self.jump_sound = pygame.mixer.Sound('audio/jump.mp3')
@@ -31,18 +61,18 @@ class Player(pygame.sprite.Sprite):
 
 	def player_input(self):
 		keys = pygame.key.get_pressed()
-		if keys[pygame.K_SPACE] and self.rect.bottom >= 300:
+		if keys[pygame.K_SPACE] and self.rect.bottom >= (SCREEN_HEIGHT - ground_height):
 			self.gravity = -20
 			#self.jump_sound.play()
 
 	def apply_gravity(self):
 		self.gravity += 1
 		self.rect.y += self.gravity
-		if self.rect.bottom >= 300:
-			self.rect.bottom = 300
+		if self.rect.bottom >= (SCREEN_HEIGHT - ground_height):
+			self.rect.bottom = (SCREEN_HEIGHT - ground_height)
 
 	def animation_state(self):
-		if self.rect.bottom < 300: 
+		if self.rect.bottom < (SCREEN_HEIGHT - ground_height): 
 			self.image = self.player_jump
 			#self.image = pygame.transform.scale(self.player_jump,(84, 84))
 
@@ -65,12 +95,12 @@ class Obstacle(pygame.sprite.Sprite):
 			fly_1 = pygame.image.load('graphics/fly/fly1.png').convert_alpha()
 			fly_2 = pygame.image.load('graphics/fly/fly2.png').convert_alpha()
 			self.frames = [fly_1,fly_2]
-			y_pos = 210
+			y_pos = (SCREEN_HEIGHT - ground_height) - 90
 		else:
 			snail_1 = pygame.image.load('graphics/snail/snail1.png').convert_alpha()
 			snail_2 = pygame.image.load('graphics/snail/snail2.png').convert_alpha()
 			self.frames = [snail_1,snail_2]
-			y_pos  = 300
+			y_pos  = (SCREEN_HEIGHT - ground_height)
 
 		self.animation_index = 0
 		self.image = self.frames[self.animation_index]
@@ -90,6 +120,11 @@ class Obstacle(pygame.sprite.Sprite):
 		if self.rect.x <= -100: 
 			self.kill()
 
+#Groups
+player = pygame.sprite.GroupSingle()
+player.add(Player())
+obstacle_group = pygame.sprite.Group()
+
 def display_score():
 	current_time = int(pygame.time.get_ticks() / 1000) - start_time
 	score_surf = test_font.render(f'Score: {current_time}',False,(64,64,64))
@@ -103,48 +138,27 @@ def collision_sprite():
 		return False
 	else: return True
 
-#def bg_movement(bg_list):
-#	if bg_list:
-#		for bg_rect in bg_list:
-#			bg_rect.x -= 1
-#			screen.blit(para1_surface,bg_rect)
-			#if obstacle_rect.bottom == 300: screen.blit(snail_surf,obstacle_rect)
-			#else: screen.blit(fly_surf,obstacle_rect)
 
-#		bg_list = [bg for bg in bg_list if bg.x > -800]
+#to store parallax images
+bg_images = []
+for i in range(1,6):
+	bg_image = pygame.transform.scale(pygame.image.load(f"graphics/plx-{i}.png").convert_alpha(),(800, 400))
+	bg_images.append(bg_image)
+bg_width = bg_images[0].get_width()
 
-#		return bg_list
-#	else: return []
+#to draw para background
+def draw_bg():
+  #redraw image 5 times beside each other
+  for x in range(5):
+    speed = 3.5
+    for i in bg_images:
+      screen.blit(i, ((x * bg_width) - bg_x * speed, 0))
+      speed += 0.2
 
+def draw_ground():
+  for x in range(15):
+    screen.blit(ground_surface, ((x * ground_width) - bg_x * 6.5, SCREEN_HEIGHT - ground_height))
 
-pygame.init()
-screen = pygame.display.set_mode((800,400))
-pygame.display.set_caption('Chicken Little')
-clock = pygame.time.Clock()
-test_font = pygame.font.Font('font/Pixeltype.ttf', 50)
-game_active = False
-start_time = 0
-score = 0
-bg_x = 0
-bg2_x = 0
-bg3_x = 0
-bg_music = pygame.mixer.Sound('audio/music.wav')
-bg_music.set_volume(0.1)
-bg_music.play(loops = -1)
-
-#Groups
-player = pygame.sprite.GroupSingle()
-player.add(Player())
-
-obstacle_group = pygame.sprite.Group()
-
-# sky_surface = pygame.image.load('graphics/plx-1.png').convert()
-sky_surface = pygame.transform.scale(pygame.image.load('graphics/plx-1.png').convert_alpha(),(800, 400))
-para1_surface = pygame.transform.scale(pygame.image.load('graphics/plx-2.png').convert_alpha(),(800, 400))
-para2_surface = pygame.transform.scale(pygame.image.load('graphics/plx-3.png').convert_alpha(),(800, 400))
-para3_surface = pygame.transform.scale(pygame.image.load('graphics/plx-4.png').convert_alpha(),(800, 400))
-ground_surface = pygame.image.load('graphics/ground.png').convert()
-#bg_rect_list = [para1_surface.get_rect(topright = (0,0))]
 
 # Intro screen
 player_stand = pygame.image.load('graphics/player/player_stand.png').convert_alpha()
@@ -161,6 +175,8 @@ game_message_rect = game_message.get_rect(center = (400,330))
 obstacle_timer = pygame.USEREVENT + 1
 pygame.time.set_timer(obstacle_timer,1500)
 
+
+#Game loop
 while True:
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
@@ -179,18 +195,20 @@ while True:
 
 	if game_active:
 
+		draw_bg()
+		draw_ground()
 		#if len(bg_rect_list) <= 3:
 		#	bg_rect_list.append(para1_surface.get_rect(topright = (0,0)))
 
 		
-		screen.blit(sky_surface,(0,0))
-		screen.blit(para1_surface,(bg_x,0))
-		bg_x -= 0.5
-		screen.blit(para2_surface,(bg2_x,0))
-		bg2_x -= 0.8
-		screen.blit(para3_surface,(bg3_x,0))
-		bg3_x -= 1
-		screen.blit(ground_surface,(0,300))
+		#screen.blit(sky_surface,(0,0))
+		#screen.blit(para1_surface,(bg_x,0))
+		bg_x += 0.5
+		#screen.blit(para2_surface,(bg2_x,0))
+		#bg2_x -= 0.8
+		#screen.blit(para3_surface,(bg3_x,0))
+		#bg3_x -= 1
+		#screen.blit(ground_surface,(0,300))
 		score = display_score()
 		
 		player.draw(screen)
@@ -215,4 +233,4 @@ while True:
 		else: screen.blit(score_message,score_message_rect)
 
 	pygame.display.update()
-	clock.tick(60)
+	clock.tick(FPS)

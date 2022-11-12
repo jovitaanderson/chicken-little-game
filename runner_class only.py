@@ -1,4 +1,5 @@
 import pygame
+import math
 from sys import exit
 from random import randint, choice
 
@@ -17,9 +18,9 @@ start_time = 0
 score = 0
 bg_x = 0
 
-bg_music = pygame.mixer.Sound('audio/music.wav')
-bg_music.set_volume(0.1)
-bg_music.play(loops = -1)
+#bg_music = pygame.mixer.Sound('audio/music.wav')
+#bg_music.set_volume(0.1)
+#bg_music.play(loops = -1)
 
 sky_surface = pygame.transform.scale(pygame.image.load('graphics/plx-1.png').convert_alpha(),(800, 400))
 ground_surface = pygame.image.load('graphics/ground-1.png').convert_alpha()
@@ -124,25 +125,36 @@ def collision_sprite():
 	else: return True
 
 
-#to store parallax background
+scroll = 0
 bg_images = []
-for i in range(1,6):
-	bg_image = pygame.transform.scale(pygame.image.load(f"graphics/plx-{i}.png").convert_alpha(),(800, 400))
-	bg_images.append(bg_image)
-bg_width = bg_images[0].get_width()
+
+bg_theme_1 = pygame.transform.scale(pygame.image.load("graphics/background_theme1.png").convert_alpha(),(800, 400))
+tiles_1 = math.ceil(SCREEN_WIDTH / bg_theme_1.get_width()) + 2
+
+bg_rect = bg_theme_1.get_rect()
+
+bg_theme_2 = pygame.transform.scale(pygame.image.load("graphics/background_theme2_2.png").convert_alpha(),(800, 400))
+bg_theme_3 = pygame.transform.scale(pygame.image.load("graphics/background_theme3.png").convert_alpha(),(800, 400))
+bg_theme_4 = pygame.transform.scale(pygame.image.load("graphics/background_theme4.png").convert_alpha(),(800, 400))
+
+bg_images.append(bg_theme_1)
+bg_images.append(bg_theme_1)
 
 #to draw parallax background
 def draw_bg():
   #redraw image 5 times beside each other
-  for x in range(5):
-    speed = 3.5
-    for i in bg_images:
-      screen.blit(i, ((x * bg_width) - bg_x * speed, 0))
-      speed += 0.2
+	for x, i in enumerate(bg_images):
+		screen.blit(i, ((x * bg_theme_1.get_width()) + bg_x, 0))
+		#bg_rect.x = x  * bg_theme_1.get_width() + bg_x
+		#pygame.draw.rect(screen, (255,0,0), bg_rect,1)
 
+
+
+ground_tile = math.ceil(SCREEN_WIDTH / ground_surface.get_width()) + 2
+print(ground_tile)
 def draw_ground():
-  for x in range(15):
-    screen.blit(ground_surface, ((x * ground_width) - bg_x * 6.5, SCREEN_HEIGHT - ground_height))
+  for x in range(0, ground_tile):
+    screen.blit(ground_surface, ((x * ground_width) + bg_x, SCREEN_HEIGHT - ground_height))
 
 
 # Intro screen
@@ -160,6 +172,8 @@ game_message_rect = game_message.get_rect(center = (400,330))
 obstacle_timer = pygame.USEREVENT + 1
 pygame.time.set_timer(obstacle_timer,1500)
 
+
+theme = 1
 
 #Game loop
 while True:
@@ -181,9 +195,22 @@ while True:
 	if game_active:
 
 		draw_bg()
-		draw_ground()
 
-		bg_x += 0.5
+		bg_x -= 4 
+		if abs(bg_x)> bg_theme_1.get_width():
+			print(bg_x)
+			del bg_images[0]
+			if score < 10:
+				bg_images.append(bg_theme_1)
+			elif score < 20:
+				bg_images.append(bg_theme_2)
+			elif score < 30:
+				bg_images.append(bg_theme_3)
+			else:
+				bg_images.append(bg_theme_4)
+
+			bg_x = 0
+
 		score = display_score()
 		
 		player.draw(screen)
@@ -201,6 +228,7 @@ while True:
 		score_message = test_font.render(f'Your score: {score}',False,(111,196,169))
 		score_message_rect = score_message.get_rect(center = (400,330))
 		screen.blit(game_name,game_name_rect)
+		bg_x = 0
 
 		if score == 0: screen.blit(game_message,game_message_rect)
 		else: screen.blit(score_message,score_message_rect)

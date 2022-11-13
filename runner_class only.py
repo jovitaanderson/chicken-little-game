@@ -182,7 +182,7 @@ scroll = 0
 bg_images = []
 
 bg_theme_1 = pygame.transform.scale(pygame.image.load("graphics/background_theme1.png").convert_alpha(),(800, 400))
-bg_theme_2 = pygame.transform.scale(pygame.image.load("graphics/background_theme2_2.png").convert_alpha(),(800, 400))
+bg_theme_2 = pygame.transform.scale(pygame.image.load("graphics/background_theme2.png").convert_alpha(),(800, 400))
 bg_theme_3 = pygame.transform.scale(pygame.image.load("graphics/background_theme3.png").convert_alpha(),(800, 400))
 bg_theme_4 = pygame.transform.scale(pygame.image.load("graphics/background_theme4.png").convert_alpha(),(800, 400))
 
@@ -217,7 +217,6 @@ obstacle_timer = pygame.USEREVENT + 1
 pygame.time.set_timer(obstacle_timer,1500)
 
 theme = 1
-
 new_game_timer = 20
 
 #Game loop

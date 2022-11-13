@@ -19,6 +19,7 @@ game_active = False
 start_time = 0
 score = 0
 bg_x = 0
+theme = 1
 
 bg_music = pygame.mixer.Sound('audio/music.wav')
 bg_music.set_volume(0.1)
@@ -178,7 +179,6 @@ def gradientRect( window, left_colour, right_colour, target_rect ):
     window.blit( colour_rect, target_rect )  
 
 # background themes
-scroll = 0
 bg_images = []
 
 bg_theme_1 = pygame.transform.scale(pygame.image.load("graphics/background/background_theme1.png").convert_alpha(),(800, 400))
@@ -186,8 +186,7 @@ bg_theme_2 = pygame.transform.scale(pygame.image.load("graphics/background/backg
 bg_theme_3 = pygame.transform.scale(pygame.image.load("graphics/background/background_theme3.png").convert_alpha(),(800, 400))
 bg_theme_4 = pygame.transform.scale(pygame.image.load("graphics/background/background_theme4.png").convert_alpha(),(800, 400))
 
-tiles_1 = math.ceil(SCREEN_WIDTH / bg_theme_1.get_width()) + 2
-bg_rect = bg_theme_1.get_rect()
+#bg_rect = bg_theme_1.get_rect()
 
 bg_images.append(bg_theme_1)
 bg_images.append(bg_theme_1)
@@ -215,8 +214,6 @@ game_message_rect = game_message.get_rect(center = (400,330))
 # Timer 
 obstacle_timer = pygame.USEREVENT + 1
 pygame.time.set_timer(obstacle_timer,1500)
-
-theme = 1
 new_game_timer = 20
 
 #Game loop

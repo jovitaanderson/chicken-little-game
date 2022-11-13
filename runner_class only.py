@@ -56,8 +56,25 @@ class Player(pygame.sprite.Sprite):
 			self.rect.x += 2.5
 		if keys[pygame.K_LEFT] and self.rect.right >= SCREEN_WIDTH * 1/10:
 			self.rect.x -= 2.5
+		
+		#for event in pygame.event.get():
+		#	if event.type == pygame.KEYDOWN :
+		#		if event.key == pygame.K_DOWN :
+		#			self.image = pygame.transform.scale(pygame.image.load('graphics/player/ChikBoy_crouch.png').convert_alpha(),(84, 50))
+		#			self.rect = self.image.get_rect(midbottom = (80,SCREEN_HEIGHT - ground_height))
+
+		#	if event.type == pygame.KEYUP :
+		#		if event.key == pygame.K_DOWN :
+		#			self.image = self.player_walk[0]
+		#			self.rect = self.image.get_rect(midbottom = (80,SCREEN_HEIGHT - ground_height))
+
 		#add crouch
-		#if keys[pygame.K_SPACE] and self.rect.bottom == (SCREEN_HEIGHT - ground_height):
+		#if keys[pygame.K_DOWN] and self.rect.bottom == (SCREEN_HEIGHT - ground_height):
+		#	self.image = pygame.transform.scale(pygame.image.load('graphics/player/ChikBoy_crouch.png').convert_alpha(),(84, 50))
+		#	self.rect = self.image.get_rect(midbottom = (80,SCREEN_HEIGHT - ground_height))
+		#elif not keys[pygame.K_DOWN] and self.gravity==0:
+		#	self.image = self.player_walk[0]
+		#	self.rect = self.image.get_rect(midbottom = (80,SCREEN_HEIGHT - ground_height))
 
 	def apply_gravity(self):
 		self.gravity += 1

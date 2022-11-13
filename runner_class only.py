@@ -11,16 +11,17 @@ pygame.init()
 clock = pygame.time.Clock()
 screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
 pygame.display.set_caption('Chicken Little')
-test_font = pygame.font.Font('font/Pixeltype.ttf', 50)
+test_font = pygame.font.Font('font/VT323-Regular.ttf', 50)
+title_font = pygame.font.Font('font/VT323-Regular.ttf', 70)
 game_active = False
 
 start_time = 0
 score = 0
 bg_x = 0
 
-#bg_music = pygame.mixer.Sound('audio/music.wav')
-#bg_music.set_volume(0.1)
-#bg_music.play(loops = -1)
+bg_music = pygame.mixer.Sound('audio/music.wav')
+bg_music.set_volume(0.1)
+bg_music.play(loops = -1)
 
 sky_surface = pygame.transform.scale(pygame.image.load('graphics/plx-1.png').convert_alpha(),(800, 400))
 ground_surface = pygame.image.load('graphics/ground-1.png').convert_alpha()
@@ -142,7 +143,7 @@ obstacle_group = pygame.sprite.Group()
 
 def display_score():
 	current_time = int(pygame.time.get_ticks() / 1000) - start_time
-	score_surf = test_font.render(f'Score: {current_time}',False,(64,64,64))
+	score_surf = test_font.render(f'Score: {current_time}',False,(255, 255, 255))
 	score_rect = score_surf.get_rect(center = (400,50))
 	screen.blit(score_surf,score_rect)
 	return current_time
@@ -154,6 +155,32 @@ def collision_sprite():
 	else: return True
 
 
+#player idle images
+player_idle = []
+for i in range(1,7):
+	player_idle_image = pygame.transform.scale(pygame.image.load(f"graphics/player/ChikBoy_idle{i}.png").convert_alpha(),(84, 84))
+	player_idle_image = pygame.transform.rotozoom(player_idle_image,0,2)
+	player_idle.append(player_idle_image)
+player_idle_index = 0
+
+#world images
+world = []
+for i in range(0,60):
+	world_images = pygame.transform.scale(pygame.image.load(f"graphics/world/frame_{i}_delay-0.34s.png").convert_alpha(),(390, 390))
+	#world_images = pygame.transform.rotozoom(world_images,0,4)
+	world.append(world_images)
+world_index = 0
+
+# gradient background: author: https://stackoverflow.com/questions/62336555/how-to-add-color-gradient-to-rectangle-in-pygame
+def gradientRect( window, left_colour, right_colour, target_rect ):
+    """ Draw a horizontal-gradient filled rectangle covering <target_rect> """
+    colour_rect = pygame.Surface( ( 2, 2 ) )                                   # tiny! 2x2 bitmap
+    pygame.draw.line( colour_rect, left_colour,  ( 0,0 ), ( 0,1 ) )            # left colour line
+    pygame.draw.line( colour_rect, right_colour, ( 1,0 ), ( 1,1 ) )            # right colour line
+    colour_rect = pygame.transform.smoothscale( colour_rect, ( target_rect.width, target_rect.height ) )  # stretch!
+    window.blit( colour_rect, target_rect )  
+
+# background themes
 scroll = 0
 bg_images = []
 
@@ -186,10 +213,13 @@ player_stand = pygame.transform.scale(pygame.image.load('graphics/player/ChikBoy
 player_stand = pygame.transform.rotozoom(player_stand,0,2)
 player_stand_rect = player_stand.get_rect(center = (400,200))
 
-game_name = test_font.render('Chicken Little',False,(111,196,169))
+game_name = title_font.render('CHICKEN LITTLE',False,(34, 37, 74))
 game_name_rect = game_name.get_rect(center = (400,80))
+game_name_surface = pygame.Surface(game_name.get_size(), pygame.SRCALPHA)
+game_name_surface.fill((192, 192, 192))
+game_name_surface.set_alpha(180)
 
-game_message = test_font.render('Press space to run',False,(111,196,169))
+game_message = test_font.render('Press [SPACE] to start',False,(145, 54, 54))
 game_message_rect = game_message.get_rect(center = (400,330))
 
 # Timer 
@@ -197,6 +227,8 @@ obstacle_timer = pygame.USEREVENT + 1
 pygame.time.set_timer(obstacle_timer,1500)
 
 theme = 1
+
+new_game_timer = 20
 
 #Game loop
 while True:
@@ -210,11 +242,14 @@ while True:
 				if theme == 1:
 					obstacle_group.add(Obstacle(choice(['fly','snail','snail','snail'])))
 				elif theme == 2:
-					obstacle_group.add(Obstacle(choice(['snake'])))
+					obstacle_group.add(Obstacle(choice(['fly','snake','snake'])))
+				else:
+					obstacle_group.add(Obstacle(choice(['fly','snail','snake'])))
 		
 		else:
-			if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+			if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE and (new_game_timer == 0 or score == 0) :
 				game_active = True
+				new_game_timer = 20
 				start_time = int(pygame.time.get_ticks() / 1000)
 
 
@@ -250,21 +285,43 @@ while True:
 		game_active = collision_sprite()
 		
 	else:
-		screen.fill((94,129,162))
-		screen.blit(player_stand,player_stand_rect)
+		#Intro idle animation
+		player_idle_index += 0.12
+		if player_idle_index >= len(player_idle):player_idle_index = 0
+		player_idle_image = player_idle[int(player_idle_index)]
+		player_idle_image_rect = player_idle_image.get_rect(center = (400,200))
 
-		score_message = test_font.render(f'Your score: {score}',False,(111,196,169))
+		#Intro world animation
+		world_index += 0.12
+		if world_index >= len(world):world_index = 0
+		world_image = world[int(world_index)]
+		world_image_rect = world_image.get_rect(center = (400,200))
+		gradientRect( screen, (6,9,24), (9,19,25), pygame.Rect( 0,0, SCREEN_WIDTH, SCREEN_HEIGHT ) )
+		screen.blit(world_image,world_image_rect)
+		screen.blit(player_idle_image,player_idle_image_rect)
+
+		score_message = test_font.render(f'Your score: {score}',False,(145, 54, 54))
 		score_message_rect = score_message.get_rect(center = (400,330))
+		screen.blit(game_name_surface,game_name_rect)
 		screen.blit(game_name,game_name_rect)
-		bg_x = 0
+	
 
+		#initilize back to default values
+		bg_x = 0
+		player.remove()
+		player.add(Player())
 		theme = 1
 		bg_images.clear()
 		bg_images.append(bg_theme_1)
 		bg_images.append(bg_theme_1)
 
-		if score == 0: screen.blit(game_message,game_message_rect)
-		else: screen.blit(score_message,score_message_rect)
+		if score == 0: 
+			screen.blit(game_message,game_message_rect)
+		else: 
+			screen.blit(score_message,score_message_rect)
+
+		if new_game_timer > 0 :
+			new_game_timer -= 1
 
 	pygame.display.update()
 	clock.tick(FPS)

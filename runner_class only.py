@@ -181,10 +181,10 @@ def gradientRect( window, left_colour, right_colour, target_rect ):
 scroll = 0
 bg_images = []
 
-bg_theme_1 = pygame.transform.scale(pygame.image.load("graphics/background_theme1.png").convert_alpha(),(800, 400))
-bg_theme_2 = pygame.transform.scale(pygame.image.load("graphics/background_theme2.png").convert_alpha(),(800, 400))
-bg_theme_3 = pygame.transform.scale(pygame.image.load("graphics/background_theme3.png").convert_alpha(),(800, 400))
-bg_theme_4 = pygame.transform.scale(pygame.image.load("graphics/background_theme4.png").convert_alpha(),(800, 400))
+bg_theme_1 = pygame.transform.scale(pygame.image.load("graphics/background/background_theme1.png").convert_alpha(),(800, 400))
+bg_theme_2 = pygame.transform.scale(pygame.image.load("graphics/background/background_theme2.png").convert_alpha(),(800, 400))
+bg_theme_3 = pygame.transform.scale(pygame.image.load("graphics/background/background_theme3.png").convert_alpha(),(800, 400))
+bg_theme_4 = pygame.transform.scale(pygame.image.load("graphics/background/background_theme4.png").convert_alpha(),(800, 400))
 
 tiles_1 = math.ceil(SCREEN_WIDTH / bg_theme_1.get_width()) + 2
 bg_rect = bg_theme_1.get_rect()

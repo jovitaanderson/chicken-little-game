@@ -5,6 +5,7 @@ from random import randint, choice
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 400
+GROUND_HEIGHT = 64
 FPS = 60
 
 pygame.init()
@@ -23,10 +24,6 @@ bg_music = pygame.mixer.Sound('audio/music.wav')
 bg_music.set_volume(0.1)
 bg_music.play(loops = -1)
 
-sky_surface = pygame.transform.scale(pygame.image.load('graphics/plx-1.png').convert_alpha(),(800, 400))
-ground_surface = pygame.image.load('graphics/ground-1.png').convert_alpha()
-ground_width = ground_surface.get_width()
-ground_height = ground_surface.get_height()
 
 class Player(pygame.sprite.Sprite):
 	def __init__(self):
@@ -40,9 +37,8 @@ class Player(pygame.sprite.Sprite):
 		self.player_index = 0
 		self.player_jump = pygame.transform.scale(pygame.image.load('graphics/player/ChikBoy_jump.png').convert_alpha(),(84, 84))
 		
-
 		self.image = self.player_walk[self.player_index]
-		self.rect = self.image.get_rect(midbottom = (80,SCREEN_HEIGHT - ground_height))
+		self.rect = self.image.get_rect(midbottom = (80,SCREEN_HEIGHT - GROUND_HEIGHT))
 		self.gravity = 0
 
 		#self.jump_sound = pygame.mixer.Sound('audio/jump.mp3')
@@ -50,7 +46,7 @@ class Player(pygame.sprite.Sprite):
 
 	def player_input(self):
 		keys = pygame.key.get_pressed()
-		if keys[pygame.K_SPACE] and self.rect.bottom >= (SCREEN_HEIGHT - ground_height):
+		if keys[pygame.K_SPACE] and self.rect.bottom >= (SCREEN_HEIGHT - GROUND_HEIGHT):
 			self.gravity = -20
 			#self.jump_sound.play()
 		if keys[pygame.K_RIGHT] and self.rect.right <= SCREEN_WIDTH - (SCREEN_WIDTH * 1/10):
@@ -58,6 +54,7 @@ class Player(pygame.sprite.Sprite):
 		if keys[pygame.K_LEFT] and self.rect.right >= SCREEN_WIDTH * 1/10:
 			self.rect.x -= 2.5
 		
+		#todo: add player crouch movement
 		#for event in pygame.event.get():
 		#	if event.type == pygame.KEYDOWN :
 		#		if event.key == pygame.K_DOWN :
@@ -69,7 +66,7 @@ class Player(pygame.sprite.Sprite):
 		#			self.image = self.player_walk[0]
 		#			self.rect = self.image.get_rect(midbottom = (80,SCREEN_HEIGHT - ground_height))
 
-		#add crouch
+		#todo: add player crouch movement
 		#if keys[pygame.K_DOWN] and self.rect.bottom == (SCREEN_HEIGHT - ground_height):
 		#	self.image = pygame.transform.scale(pygame.image.load('graphics/player/ChikBoy_crouch.png').convert_alpha(),(84, 50))
 		#	self.rect = self.image.get_rect(midbottom = (80,SCREEN_HEIGHT - ground_height))
@@ -80,11 +77,11 @@ class Player(pygame.sprite.Sprite):
 	def apply_gravity(self):
 		self.gravity += 1
 		self.rect.y += self.gravity
-		if self.rect.bottom >= (SCREEN_HEIGHT - ground_height):
-			self.rect.bottom = (SCREEN_HEIGHT - ground_height)
+		if self.rect.bottom >= (SCREEN_HEIGHT - GROUND_HEIGHT):
+			self.rect.bottom = (SCREEN_HEIGHT - GROUND_HEIGHT)
 
 	def animation_state(self):
-		if self.rect.bottom < (SCREEN_HEIGHT - ground_height): 
+		if self.rect.bottom < (SCREEN_HEIGHT - GROUND_HEIGHT): 
 			self.image = self.player_jump
 
 		else:
@@ -105,17 +102,17 @@ class Obstacle(pygame.sprite.Sprite):
 			fly_1 = pygame.image.load('graphics/fly/fly1.png').convert_alpha()
 			fly_2 = pygame.image.load('graphics/fly/fly2.png').convert_alpha()
 			self.frames = [fly_1,fly_2]
-			y_pos = (SCREEN_HEIGHT - ground_height) - 90
+			y_pos = (SCREEN_HEIGHT - GROUND_HEIGHT) - 90
 		elif type == 'snail':
 			snail_1 = pygame.image.load('graphics/snail/snail1.png').convert_alpha()
 			snail_2 = pygame.image.load('graphics/snail/snail2.png').convert_alpha()
 			self.frames = [snail_1,snail_2]
-			y_pos  = (SCREEN_HEIGHT - ground_height)
+			y_pos  = (SCREEN_HEIGHT - GROUND_HEIGHT)
 		else:
 			snake_1 = pygame.transform.scale(pygame.image.load('graphics/snake/Snake1.png').convert_alpha(),(50, 50))
 			snake_2 = pygame.transform.scale(pygame.image.load('graphics/snake/Snake2.png').convert_alpha(),(50, 50))
 			self.frames = [snake_1,snake_2]
-			y_pos  = (SCREEN_HEIGHT - ground_height) + 5
+			y_pos  = (SCREEN_HEIGHT - GROUND_HEIGHT) + 5
 
 
 		self.animation_index = 0
@@ -200,13 +197,6 @@ def draw_bg():
 		screen.blit(i, ((x * bg_theme_1.get_width()) + bg_x, 0))
 		#bg_rect.x = x  * bg_theme_1.get_width() + bg_x
 		#pygame.draw.rect(screen, (255,0,0), bg_rect,1)
-
-
-ground_tile = math.ceil(SCREEN_WIDTH / ground_surface.get_width()) + 2
-print(ground_tile)
-def draw_ground():
-  for x in range(0, ground_tile):
-    screen.blit(ground_surface, ((x * ground_width) + bg_x, SCREEN_HEIGHT - ground_height))
 
 # Intro screen
 player_stand = pygame.transform.scale(pygame.image.load('graphics/player/ChikBoy_run1.png').convert_alpha(),(84, 84))
@@ -298,8 +288,8 @@ while True:
 		world_image_rect = world_image.get_rect(center = (400,200))
 		gradientRect( screen, (6,9,24), (9,19,25), pygame.Rect( 0,0, SCREEN_WIDTH, SCREEN_HEIGHT ) )
 		screen.blit(world_image,world_image_rect)
-		screen.blit(player_idle_image,player_idle_image_rect)
 
+		screen.blit(player_idle_image,player_idle_image_rect)
 		score_message = test_font.render(f'Your score: {score}',False,(145, 54, 54))
 		score_message_rect = score_message.get_rect(center = (400,330))
 		screen.blit(game_name_surface,game_name_rect)

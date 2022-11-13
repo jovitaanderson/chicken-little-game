@@ -52,6 +52,12 @@ class Player(pygame.sprite.Sprite):
 		if keys[pygame.K_SPACE] and self.rect.bottom >= (SCREEN_HEIGHT - ground_height):
 			self.gravity = -20
 			#self.jump_sound.play()
+		if keys[pygame.K_RIGHT] and self.rect.right <= SCREEN_WIDTH - (SCREEN_WIDTH * 1/10):
+			self.rect.x += 2.5
+		if keys[pygame.K_LEFT] and self.rect.right >= SCREEN_WIDTH * 1/10:
+			self.rect.x -= 2.5
+		#add crouch
+		#if keys[pygame.K_SPACE] and self.rect.bottom == (SCREEN_HEIGHT - ground_height):
 
 	def apply_gravity(self):
 		self.gravity += 1
@@ -82,11 +88,17 @@ class Obstacle(pygame.sprite.Sprite):
 			fly_2 = pygame.image.load('graphics/fly/fly2.png').convert_alpha()
 			self.frames = [fly_1,fly_2]
 			y_pos = (SCREEN_HEIGHT - ground_height) - 90
-		else:
+		elif type == 'snail':
 			snail_1 = pygame.image.load('graphics/snail/snail1.png').convert_alpha()
 			snail_2 = pygame.image.load('graphics/snail/snail2.png').convert_alpha()
 			self.frames = [snail_1,snail_2]
 			y_pos  = (SCREEN_HEIGHT - ground_height)
+		else:
+			snake_1 = pygame.transform.scale(pygame.image.load('graphics/snake/Snake1.png').convert_alpha(),(50, 50))
+			snake_2 = pygame.transform.scale(pygame.image.load('graphics/snake/Snake2.png').convert_alpha(),(50, 50))
+			self.frames = [snake_1,snake_2]
+			y_pos  = (SCREEN_HEIGHT - ground_height) + 5
+
 
 		self.animation_index = 0
 		self.image = self.frames[self.animation_index]
@@ -129,25 +141,21 @@ scroll = 0
 bg_images = []
 
 bg_theme_1 = pygame.transform.scale(pygame.image.load("graphics/background_theme1.png").convert_alpha(),(800, 400))
-tiles_1 = math.ceil(SCREEN_WIDTH / bg_theme_1.get_width()) + 2
-
-bg_rect = bg_theme_1.get_rect()
-
 bg_theme_2 = pygame.transform.scale(pygame.image.load("graphics/background_theme2_2.png").convert_alpha(),(800, 400))
 bg_theme_3 = pygame.transform.scale(pygame.image.load("graphics/background_theme3.png").convert_alpha(),(800, 400))
 bg_theme_4 = pygame.transform.scale(pygame.image.load("graphics/background_theme4.png").convert_alpha(),(800, 400))
 
+tiles_1 = math.ceil(SCREEN_WIDTH / bg_theme_1.get_width()) + 2
+bg_rect = bg_theme_1.get_rect()
+
 bg_images.append(bg_theme_1)
 bg_images.append(bg_theme_1)
 
-#to draw parallax background
 def draw_bg():
-  #redraw image 5 times beside each other
 	for x, i in enumerate(bg_images):
 		screen.blit(i, ((x * bg_theme_1.get_width()) + bg_x, 0))
 		#bg_rect.x = x  * bg_theme_1.get_width() + bg_x
 		#pygame.draw.rect(screen, (255,0,0), bg_rect,1)
-
 
 
 ground_tile = math.ceil(SCREEN_WIDTH / ground_surface.get_width()) + 2
@@ -155,7 +163,6 @@ print(ground_tile)
 def draw_ground():
   for x in range(0, ground_tile):
     screen.blit(ground_surface, ((x * ground_width) + bg_x, SCREEN_HEIGHT - ground_height))
-
 
 # Intro screen
 player_stand = pygame.transform.scale(pygame.image.load('graphics/player/ChikBoy_run1.png').convert_alpha(),(84, 84))
@@ -172,7 +179,6 @@ game_message_rect = game_message.get_rect(center = (400,330))
 obstacle_timer = pygame.USEREVENT + 1
 pygame.time.set_timer(obstacle_timer,1500)
 
-
 theme = 1
 
 #Game loop
@@ -184,7 +190,10 @@ while True:
 
 		if game_active:
 			if event.type == obstacle_timer:
-				obstacle_group.add(Obstacle(choice(['fly','snail','snail','snail'])))
+				if theme == 1:
+					obstacle_group.add(Obstacle(choice(['fly','snail','snail','snail'])))
+				elif theme == 2:
+					obstacle_group.add(Obstacle(choice(['snake'])))
 		
 		else:
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
@@ -195,23 +204,25 @@ while True:
 	if game_active:
 
 		draw_bg()
+		score = display_score()
 
 		bg_x -= 4 
 		if abs(bg_x)> bg_theme_1.get_width():
-			print(bg_x)
 			del bg_images[0]
 			if score < 10:
 				bg_images.append(bg_theme_1)
+				theme = 1
 			elif score < 20:
 				bg_images.append(bg_theme_2)
+				theme = 2
 			elif score < 30:
 				bg_images.append(bg_theme_3)
+				them = 3
 			else:
 				bg_images.append(bg_theme_4)
-
+				theme = 4
 			bg_x = 0
 
-		score = display_score()
 		
 		player.draw(screen)
 		player.update()
@@ -229,6 +240,11 @@ while True:
 		score_message_rect = score_message.get_rect(center = (400,330))
 		screen.blit(game_name,game_name_rect)
 		bg_x = 0
+
+		theme = 1
+		bg_images.clear()
+		bg_images.append(bg_theme_1)
+		bg_images.append(bg_theme_1)
 
 		if score == 0: screen.blit(game_message,game_message_rect)
 		else: screen.blit(score_message,score_message_rect)

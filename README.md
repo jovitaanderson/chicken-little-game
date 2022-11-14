@@ -7,19 +7,6 @@ Clique: What are you? Chicken?
 
   <p align="center">
     Our game title named Chicken little is inspired from how we humans always refer to it as a person that fear something.
-    Cliche: What are you? Chicken? (means pussy!) 
-    Player: Chicken
-    Put in things that people fear? That the chicken is running away from.
-
-    <br />
-    <a href="https://github.com/qwtan98/DJMV-IS216Project"><strong>Explore the docs »</strong></a>
-    <br />
-    <br />
-    <a href="https://github.com/qwtan98/DJMV-IS216Project">View Demo</a>
-    ·
-    <a href="https://github.com/qwtan98/DJMV-IS216Project/issues">Report Bug</a>
-    ·
-    <a href="https://github.com/qwtan98/DJMV-IS216Project/issues">Request Feature</a>
   </p>
 
 

@@ -6,7 +6,7 @@ Clique: What are you? Chicken?
 -- Insert Logo --
   <br/>
   <div>
-    <img src="[https://img.itch.zone/aW1nLzYwODg4NDYuZ2lm/original/0yoRXr.gif](https://img.itch.zone/aW1hZ2UvMTA2MzY1NC82MDg4NzcyLmdpZg==/347x500/00ORFO.gif)" alt="chicken_sprite">
+    <img src="https://img.itch.zone/aW1nLzYwODg4NDYuZ2lm/original/0yoRXr.gif" alt="chicken_sprite">
     <p align="center">
       Our game title named Chicken little is inspired from how we humans always refer to it as a person that fear something.
     </p>

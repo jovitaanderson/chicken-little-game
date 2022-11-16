@@ -42,19 +42,31 @@ class Player(pygame.sprite.Sprite):
 		self.rect = self.image.get_rect(midbottom = (80,SCREEN_HEIGHT - GROUND_HEIGHT))
 		self.gravity = 0
 
-		#self.jump_sound = pygame.mixer.Sound('audio/jump.mp3')
-		#self.jump_sound.set_volume(0.5)
+		self.jump_sound = pygame.mixer.Sound('audio/jump.mp3')
+		self.jump_sound.set_volume(0.5)
+
+		self.obstacle_sound = pygame.mixer.Sound('audio/touchObstacle.mp3')
+		self.obstacle_sound.set_volume(0.5)
 
 	def player_input(self):
 		keys = pygame.key.get_pressed()
-		if keys[pygame.K_SPACE] and self.rect.bottom >= (SCREEN_HEIGHT - GROUND_HEIGHT):
+		if (keys[pygame.K_SPACE] or keys[pygame.K_UP] or keys[pygame.K_w]) and self.rect.bottom >= (SCREEN_HEIGHT - GROUND_HEIGHT):
+			print("jump detected")
 			self.gravity = -20
-			#self.jump_sound.play()
-		if keys[pygame.K_RIGHT] and self.rect.right <= SCREEN_WIDTH - (SCREEN_WIDTH * 1/10):
+			self.jump_sound.play()
+
+		if (keys[pygame.K_RIGHT] or keys[pygame.K_d]) and self.rect.right <= SCREEN_WIDTH - (SCREEN_WIDTH * 1/10):
+			print("right detected")
 			self.rect.x += 2.5
-		if keys[pygame.K_LEFT] and self.rect.right >= SCREEN_WIDTH * 1/10:
+
+		if (keys[pygame.K_LEFT] or keys[pygame.K_a]) and self.rect.right >= SCREEN_WIDTH * 1/10:
+			print("left detected")
 			self.rect.x -= 2.5
-		
+			
+		if (keys[pygame.K_DOWN] or keys[pygame.K_s]) and self.rect.top >= SCREEN_HEIGHT * 1/10:
+			print("crouched detected")
+			self.image = pygame.transform.scale(pygame.image.load('graphics/player/ChikBoy_crouch.png').convert_alpha(),(20, 20))
+			self.gravity = 20
 		#todo: add player crouch movement
 		#for event in pygame.event.get():
 		#	if event.type == pygame.KEYDOWN :
@@ -150,7 +162,8 @@ def collision_sprite():
 	if pygame.sprite.spritecollide(player.sprite,obstacle_group,False):
 		obstacle_group.empty()
 		return False
-	else: return True
+	else: 
+		return True
 
 
 #player idle images

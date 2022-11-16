@@ -45,8 +45,9 @@ class Player(pygame.sprite.Sprite):
 		self.jump_sound = pygame.mixer.Sound('audio/jump.mp3')
 		self.jump_sound.set_volume(0.5)
 
-		self.obstacle_sound = pygame.mixer.Sound('audio/touchObstacle.mp3')
-		self.obstacle_sound.set_volume(0.5)
+		# obstacle audio to be modified
+		self.obstacle_sound = pygame.mixer.Sound('audio/collision.mp3')
+		self.obstacle_sound.set_volume(1)
 
 	def player_input(self):
 		keys = pygame.key.get_pressed()
@@ -65,8 +66,8 @@ class Player(pygame.sprite.Sprite):
 			
 		if (keys[pygame.K_DOWN] or keys[pygame.K_s]) and self.rect.top >= SCREEN_HEIGHT * 1/10:
 			print("crouched detected")
-			self.image = pygame.transform.scale(pygame.image.load('graphics/player/ChikBoy_crouch.png').convert_alpha(),(20, 20))
-			self.gravity = 20
+			self.image = pygame.transform.scale(pygame.image.load('graphics/player/ChikBoy_crouch.png').convert_alpha(),(84, 84))
+			self.gravity += 20
 		#todo: add player crouch movement
 		#for event in pygame.event.get():
 		#	if event.type == pygame.KEYDOWN :
@@ -146,6 +147,53 @@ class Obstacle(pygame.sprite.Sprite):
 		if self.rect.x <= -100: 
 			self.kill()
 
+class Crosshair(pygame.sprite.Sprite):
+	def __init__(self):
+		super().__init__()
+	
+		self.gunshot = pygame.mixer.Sound('audio/shooting.mp3')
+		self.cool_down_count = 0
+		self.image = pygame.image.load('graphics/shooting/crosshair_red_large.png')
+		self.rect = self.image.get_rect()
+		self.activate_cooldown = False
+
+	def shoot(self):
+		if not self.activate_cooldown:
+			print("player shooting")
+			self.gunshot.play()
+			self.cool_down_count += 1
+			self.cool_down()
+			# shoot_press_time = pygame.time.get_ticks()
+			pygame.sprite.spritecollide(crosshair, obstacle_group, True)
+
+		# if player shot 3 times, he or she will be placed on cooldown
+		else:
+			print("player on cooldown")
+			pygame.sprite.spritecollide(crosshair, obstacle_group, False)
+			self.cool_down()
+
+
+	# update position of crosshair to mouse position
+	def update(self):
+		self.rect.center = pygame.mouse.get_pos() # get x and y position of mouse
+
+	def cool_down(self):
+		if (self.cool_down_count == 3 ):
+			self.activate_cooldown = True
+			self.image = pygame.image.load('graphics/shooting/crosshair_white_large.png')
+
+		else: 
+			self.image = pygame.image.load('graphics/shooting/crosshair_red_large.png')
+
+#Crosshair
+crosshair = Crosshair()
+crosshair_group = pygame.sprite.Group()
+crosshair_group.add(crosshair)
+
+# crosshair_group.draw(screen)
+
+
+
 #Groups
 player = pygame.sprite.GroupSingle()
 player.add(Player())
@@ -161,6 +209,9 @@ def display_score():
 def collision_sprite():
 	if pygame.sprite.spritecollide(player.sprite,obstacle_group,False):
 		obstacle_group.empty()
+		print("Collision")
+		bg_music = pygame.mixer.Sound('audio/collision.mp3')
+		bg_music.play()
 		return False
 	else: 
 		return True
@@ -229,12 +280,24 @@ obstacle_timer = pygame.USEREVENT + 1
 pygame.time.set_timer(obstacle_timer,1500)
 new_game_timer = 20
 
+
+cooldown_timer = 300
 #Game loop
 while True:
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			pygame.quit()
 			exit()
+
+		if event.type == pygame.MOUSEBUTTONDOWN:
+			crosshair.shoot()
+		
+		if crosshair.activate_cooldown:
+			cooldown_timer -= 1
+		
+		if cooldown_timer <= 0:
+			crosshair.activate_cooldown = False
+			crosshair.cool_down_count = 0
 
 		if game_active:
 			if event.type == obstacle_timer:
@@ -274,7 +337,9 @@ while True:
 				theme = 4
 			bg_x = 0
 
-		
+		crosshair_group.draw(screen)
+		crosshair_group.update()
+
 		player.draw(screen)
 		player.update()
 

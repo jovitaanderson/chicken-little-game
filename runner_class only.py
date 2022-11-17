@@ -38,6 +38,9 @@ class Player(pygame.sprite.Sprite):
 		self.player_index = 0
 		self.player_jump = pygame.transform.scale(pygame.image.load('graphics/player/ChikBoy_jump.png').convert_alpha(),(84, 84))
 		
+		self.player_crouch = pygame.transform.scale(pygame.image.load('graphics/player/ChikBoy_crouch.png').convert_alpha(),(84, 95))
+		self.crouch = False
+
 		self.image = self.player_walk[self.player_index]
 		self.rect = self.image.get_rect(midbottom = (80,SCREEN_HEIGHT - GROUND_HEIGHT))
 		self.gravity = 0
@@ -64,10 +67,11 @@ class Player(pygame.sprite.Sprite):
 			print("left detected")
 			self.rect.x -= 2.5
 			
-		if (keys[pygame.K_DOWN] or keys[pygame.K_s]) and self.rect.top >= SCREEN_HEIGHT * 1/10:
+		if (keys[pygame.K_DOWN] or keys[pygame.K_s] and self.rect.bottom <= (SCREEN_HEIGHT - GROUND_HEIGHT)):
+			self.crouch = True
+			self.gravity = 10
 			print("crouched detected")
-			self.image = pygame.transform.scale(pygame.image.load('graphics/player/ChikBoy_crouch.png').convert_alpha(),(84, 84))
-			self.gravity += 20
+		
 		#todo: add player crouch movement
 		#for event in pygame.event.get():
 		#	if event.type == pygame.KEYDOWN :
@@ -95,9 +99,17 @@ class Player(pygame.sprite.Sprite):
 			self.rect.bottom = (SCREEN_HEIGHT - GROUND_HEIGHT)
 
 	def animation_state(self):
+		# player jump
 		if self.rect.bottom < (SCREEN_HEIGHT - GROUND_HEIGHT): 
 			self.image = self.player_jump
 
+		# player crouch
+		elif self.crouch:
+			self.image = self.player_crouch
+			self.crouch = False
+
+
+		# player walk
 		else:
 			self.player_index += 0.3
 			if self.player_index >= len(self.player_walk):self.player_index = 0
@@ -158,10 +170,11 @@ class Crosshair(pygame.sprite.Sprite):
 		self.activate_cooldown = False
 
 	def shoot(self):
+		# if player is not on cooldown
 		if not self.activate_cooldown:
 			print("player shooting")
 			self.gunshot.play()
-			self.cool_down_count += 1
+			self.cool_down_count = 1
 			self.cool_down()
 			# shoot_press_time = pygame.time.get_ticks()
 			pygame.sprite.spritecollide(crosshair, obstacle_group, True)
@@ -176,14 +189,14 @@ class Crosshair(pygame.sprite.Sprite):
 	# update position of crosshair to mouse position
 	def update(self):
 		self.rect.center = pygame.mouse.get_pos() # get x and y position of mouse
+		self.cool_down()
 
 	def cool_down(self):
 		if (self.cool_down_count == 1 ):
 			self.activate_cooldown = True
 			self.image = pygame.image.load('graphics/shooting/crosshair_white_large.png')
 
-		else: 
-			self.cool_down_count = 0
+		else:
 			self.image = pygame.image.load('graphics/shooting/crosshair_red_large.png')
 
 #Crosshair
@@ -281,8 +294,9 @@ obstacle_timer = pygame.USEREVENT + 1
 pygame.time.set_timer(obstacle_timer,1500)
 new_game_timer = 20
 
+cooldown_timer = pygame.USEREVENT + 1
+pygame.time.set_timer(cooldown_timer, 3000)
 
-cooldown_timer = 300
 #Game loop
 while True:
 	for event in pygame.event.get():
@@ -292,15 +306,15 @@ while True:
 
 		if event.type == pygame.MOUSEBUTTONDOWN:
 			crosshair.shoot()
-		
-		if crosshair.activate_cooldown:
-			cooldown_timer -= 1
-		
-		if cooldown_timer <= 0:
-			crosshair.activate_cooldown = False
-			crosshair.cool_down_count = 0
-
+	
 		if game_active:
+			# handle player cooldown
+			if crosshair.activate_cooldown:
+				if event.type == cooldown_timer:				
+					crosshair.cool_down_count = 0
+					crosshair.activate_cooldown = False
+
+			# handle obstacle 
 			if event.type == obstacle_timer:
 				if theme == 1:
 					obstacle_group.add(Obstacle(choice(['fly','snail','snail','snail'])))
@@ -308,6 +322,7 @@ while True:
 					obstacle_group.add(Obstacle(choice(['fly','snake','snake'])))
 				else:
 					obstacle_group.add(Obstacle(choice(['fly','snail','snake'])))
+		
 		
 		else:
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE and (new_game_timer == 0 or score == 0) :

@@ -168,7 +168,7 @@ class Obstacle(pygame.sprite.Sprite):
 			self.frames = [scorpion_1,scorpion_2]
 			y_pos  = (SCREEN_HEIGHT - GROUND_HEIGHT)
 
-
+		self.type = type
 		self.animation_index = 0
 		self.image = self.frames[self.animation_index]
 		self.rect = self.image.get_rect(midbottom = (randint(900,1100),y_pos))
@@ -180,7 +180,10 @@ class Obstacle(pygame.sprite.Sprite):
 
 	def update(self):
 		self.animation_state()
-		self.rect.x -= 6
+		if not self.type == 'fire':
+			self.rect.x -= 6
+		else: 
+			self.rect.x -= 4
 		self.destroy()
 
 	def destroy(self):
@@ -254,7 +257,7 @@ def collision_sprite():
 		print("Collision")
 		bg_music = pygame.mixer.Sound('audio/collision.wav')
 		bg_music.play()
-		return True
+		return False
 	else: 
 		return True
 
@@ -319,10 +322,10 @@ game_message_rect = game_message.get_rect(center = (400,330))
 
 # Timer 
 obstacle_timer = pygame.USEREVENT + 1
-pygame.time.set_timer(obstacle_timer,1500)
+pygame.time.set_timer(obstacle_timer, 1200)
 new_game_timer = 20
 
-cooldown_timer = pygame.USEREVENT + 1
+cooldown_timer = pygame.USEREVENT + 2
 pygame.time.set_timer(cooldown_timer, 3000)
 
 #Game loop
@@ -414,7 +417,6 @@ while True:
 		score_message_rect = score_message.get_rect(center = (400,330))
 		screen.blit(game_name_surface,game_name_rect)
 		screen.blit(game_name,game_name_rect)
-	
 
 		#initilize back to default values
 		bg_x = 0

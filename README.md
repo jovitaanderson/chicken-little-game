@@ -17,9 +17,9 @@ Clique: What are you? Chicken?
 
 | Members               | Email                                                             
 | --------------------- | ---------------- 
-| Jovita Anderson       |                     
+| Jovita Anderson       |  jovita@live.com.sg                   
 | Jane Lim Enqi         |  janelim2001@gmail.com          
-| Aloysius Chua         |         
-| Huang Yi Pin          | 
+| Aloysius Chua         |  aloysius_chua@yahoo.com
+| Huang Yi Pin          |  huangyipin17@gmail.com
 
 

@@ -42,11 +42,11 @@ class Player(pygame.sprite.Sprite):
 		self.rect = self.image.get_rect(midbottom = (80,SCREEN_HEIGHT - GROUND_HEIGHT))
 		self.gravity = 0
 
-		self.jump_sound = pygame.mixer.Sound('audio/jump.mp3')
+		self.jump_sound = pygame.mixer.Sound('audio/jump.wav')
 		self.jump_sound.set_volume(0.5)
 
 		# obstacle audio to be modified
-		self.obstacle_sound = pygame.mixer.Sound('audio/collision.mp3')
+		self.obstacle_sound = pygame.mixer.Sound('audio/collision.wav')
 		self.obstacle_sound.set_volume(1)
 
 	def player_input(self):
@@ -151,7 +151,7 @@ class Crosshair(pygame.sprite.Sprite):
 	def __init__(self):
 		super().__init__()
 	
-		self.gunshot = pygame.mixer.Sound('audio/shooting.mp3')
+		self.gunshot = pygame.mixer.Sound('audio/shooting.wav')
 		self.cool_down_count = 0
 		self.image = pygame.image.load('graphics/shooting/crosshair_red_large.png')
 		self.rect = self.image.get_rect()
@@ -178,11 +178,12 @@ class Crosshair(pygame.sprite.Sprite):
 		self.rect.center = pygame.mouse.get_pos() # get x and y position of mouse
 
 	def cool_down(self):
-		if (self.cool_down_count == 3 ):
+		if (self.cool_down_count == 1 ):
 			self.activate_cooldown = True
 			self.image = pygame.image.load('graphics/shooting/crosshair_white_large.png')
 
 		else: 
+			self.cool_down_count = 0
 			self.image = pygame.image.load('graphics/shooting/crosshair_red_large.png')
 
 #Crosshair
@@ -210,7 +211,7 @@ def collision_sprite():
 	if pygame.sprite.spritecollide(player.sprite,obstacle_group,False):
 		obstacle_group.empty()
 		print("Collision")
-		bg_music = pygame.mixer.Sound('audio/collision.mp3')
+		bg_music = pygame.mixer.Sound('audio/collision.wav')
 		bg_music.play()
 		return False
 	else: 

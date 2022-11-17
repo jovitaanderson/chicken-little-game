@@ -112,6 +112,7 @@ class Obstacle(pygame.sprite.Sprite):
 	def __init__(self,type):
 		super().__init__()
 		
+		#map 1 
 		if type == 'fly':
 			fly_1 = pygame.image.load('graphics/fly/fly1.png').convert_alpha()
 			fly_2 = pygame.image.load('graphics/fly/fly2.png').convert_alpha()
@@ -122,11 +123,38 @@ class Obstacle(pygame.sprite.Sprite):
 			snail_2 = pygame.image.load('graphics/snail/snail2.png').convert_alpha()
 			self.frames = [snail_1,snail_2]
 			y_pos  = (SCREEN_HEIGHT - GROUND_HEIGHT)
-		else:
-			snake_1 = pygame.transform.scale(pygame.image.load('graphics/snake/Snake1.png').convert_alpha(),(50, 50))
-			snake_2 = pygame.transform.scale(pygame.image.load('graphics/snake/Snake2.png').convert_alpha(),(50, 50))
+		#map 2
+		elif type == 'bullet':
+			bullet_1 = pygame.transform.scale(pygame.image.load('graphics/Bullet/Bullet1.png').convert_alpha(),(50, 50))
+			self.frames = [bullet_1]
+			y_pos = (SCREEN_HEIGHT - GROUND_HEIGHT) - 90
+		elif type == 'slime':
+			slime_1 = pygame.transform.scale(pygame.image.load('graphics/Slime/Slime1.png').convert_alpha(),(50, 50))
+			slime_2 = pygame.transform.scale(pygame.image.load('graphics/Slime/Slime2.png').convert_alpha(),(50, 50))
+			self.frames = [slime_1,slime_2]
+			y_pos = (SCREEN_HEIGHT - GROUND_HEIGHT)
+		#map 3
+		elif type == 'fire':
+			fire_1 = pygame.transform.scale(pygame.image.load('graphics/Fire/Fire1.png').convert_alpha(),(50, 50))
+			fire_2 = pygame.transform.scale(pygame.image.load('graphics/Fire/Fire2.png').convert_alpha(),(50, 50))
+			self.frames = [fire_1,fire_2]
+			y_pos  = (SCREEN_HEIGHT - GROUND_HEIGHT)
+		#map 4
+		elif type == 'snake':
+			snake_1 = pygame.transform.scale(pygame.image.load('graphics/Snake/Snake1.png').convert_alpha(),(50, 50))
+			snake_2 = pygame.transform.scale(pygame.image.load('graphics/Snake/Snake2.png').convert_alpha(),(50, 50))
 			self.frames = [snake_1,snake_2]
 			y_pos  = (SCREEN_HEIGHT - GROUND_HEIGHT) + 5
+		elif type == 'bee':
+			bee_1 = pygame.transform.scale(pygame.image.load('graphics/Bee/Bee1.png').convert_alpha(),(50, 50))
+			bee_2 = pygame.transform.scale(pygame.image.load('graphics/Bee/Bee2.png').convert_alpha(),(50, 50))
+			self.frames = [bee_1,bee_2]
+			y_pos  = (SCREEN_HEIGHT - GROUND_HEIGHT) - 90
+		elif type == 'scorpion':
+			scorpion_1 = pygame.transform.scale(pygame.image.load('graphics/Scorpion/Scorpion1.png').convert_alpha(),(50, 50))
+			scorpion_2 = pygame.transform.scale(pygame.image.load('graphics/Scorpion/Scorpion2.png').convert_alpha(),(50, 50))
+			self.frames = [scorpion_1,scorpion_2]
+			y_pos  = (SCREEN_HEIGHT - GROUND_HEIGHT)
 
 
 		self.animation_index = 0
@@ -213,7 +241,7 @@ def collision_sprite():
 		print("Collision")
 		bg_music = pygame.mixer.Sound('audio/collision.wav')
 		bg_music.play()
-		return False
+		return True
 	else: 
 		return True
 
@@ -305,9 +333,11 @@ while True:
 				if theme == 1:
 					obstacle_group.add(Obstacle(choice(['fly','snail','snail','snail'])))
 				elif theme == 2:
-					obstacle_group.add(Obstacle(choice(['fly','snake','snake'])))
+					obstacle_group.add(Obstacle(choice(['bullet','slime','slime'])))
+				elif theme == 3:
+					obstacle_group.add(Obstacle(choice(['bullet','slime', 'fire', 'fire'])))
 				else:
-					obstacle_group.add(Obstacle(choice(['fly','snail','snake'])))
+					obstacle_group.add(Obstacle(choice(['bee','snake', 'scorpion'])))
 		
 		else:
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE and (new_game_timer == 0 or score == 0) :
@@ -332,7 +362,7 @@ while True:
 				theme = 2
 			elif score < 30:
 				bg_images.append(bg_theme_3)
-				them = 3
+				theme = 3
 			else:
 				bg_images.append(bg_theme_4)
 				theme = 4

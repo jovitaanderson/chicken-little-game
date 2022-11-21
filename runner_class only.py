@@ -21,10 +21,44 @@ score = 0
 bg_x = 0
 theme = 1
 
+
 bg_music = pygame.mixer.Sound('audio/music.wav')
 bg_music.set_volume(0.1)
 bg_music.play(loops = -1)
 
+vec = pygame.math.Vector2
+
+class HealthBar(pygame.sprite.Sprite):
+	def __init__(self, x, y):
+		super().__init__()
+
+		self.load_animations()
+		self.health = 3
+		self.image = self.health_ani[self.health]
+		self.rect = self.image.get_rect(midbottom = (400, 90))
+		self.pos = vec(x,y)
+			
+	def render(self, display):
+		display.blit(self.image, self.pos)
+
+
+	def takeDamage(self, damage):
+		self.health -= damage
+		if self.health < 0:
+			self.health = 0
+		self.image = self.health_ani[self.health]
+
+	def load_animations(self):
+		self.health_ani = [pygame.image.load("graphics/heart/heart_0.png").convert_alpha(),
+			pygame.image.load("graphics/heart/heart_1.png").convert_alpha(),
+			pygame.image.load("graphics/heart/heart_2.png").convert_alpha(),
+			pygame.image.load("graphics/heart/heart_3.png").convert_alpha()]
+
+
+#intialise healthbar
+health = HealthBar(50, 10)
+health_group = pygame.sprite.Group()
+health_group.add(health)
 
 class Player(pygame.sprite.Sprite):
 	def __init__(self):
@@ -34,6 +68,11 @@ class Player(pygame.sprite.Sprite):
 		for i in range(1,11):
 			player_walk_image = pygame.transform.scale(pygame.image.load(f"graphics/player/ChikBoy_run{i}.png").convert_alpha(),(84, 84))
 			self.player_walk.append(player_walk_image)
+
+		self.cooldown = False
+		self.healthbar = HealthBar(400, 90)
+		self.health = 3
+		self.player_hit_count = 0
 
 		self.player_index = 0
 		self.player_jump = pygame.transform.scale(pygame.image.load('graphics/player/ChikBoy_jump.png').convert_alpha(),(84, 84))
@@ -51,6 +90,20 @@ class Player(pygame.sprite.Sprite):
 		# obstacle audio to be modified
 		self.obstacle_sound = pygame.mixer.Sound('audio/collision.wav')
 		self.obstacle_sound.set_volume(1)
+
+	def player_hit(self):
+		print("player hit")
+		self.healthbar.health -= 1
+		if self.cooldown == False:      
+			self.cooldown = True # Enable the cooldown
+			# pygame.time.set_timer(hit_cooldown, 1000) # Resets cooldown in 1 second
+	
+			self.health = self.health - 1
+			health.image = self.health_ani[self.health]
+			
+			if self.health <= 0:
+				self.kill()
+				pygame.display.update()
 
 	def player_input(self):
 		keys = pygame.key.get_pressed()
@@ -115,10 +168,21 @@ class Player(pygame.sprite.Sprite):
 			if self.player_index >= len(self.player_walk):self.player_index = 0
 			self.image = self.player_walk[int(self.player_index)]
 
+	def load_animations(self):
+		self.health_ani = [pygame.image.load("graphics/heart/heart_0.png").convert_alpha(),
+			pygame.image.load("graphics/heart/heart_1.png").convert_alpha(),
+			pygame.image.load("graphics/heart/heart_2.png").convert_alpha(),
+			pygame.image.load("graphics/heart/heart_3.png").convert_alpha()]
+	
+	def render(self, display):
+		display.blit(self.image, self.pos)
+		self.healthbar.render(display)
+
 	def update(self):
 		self.player_input()
 		self.apply_gravity()
 		self.animation_state()
+		
 
 class Obstacle(pygame.sprite.Sprite):
 	def __init__(self,type):
@@ -207,10 +271,9 @@ class Crosshair(pygame.sprite.Sprite):
 			self.gunshot.play()
 			self.cool_down_count = 1
 			self.cool_down()
-			# shoot_press_time = pygame.time.get_ticks()
 			pygame.sprite.spritecollide(crosshair, obstacle_group, True)
 
-		# if player shot 3 times, he or she will be placed on cooldown
+		# if player shot 1 time, he or she will be placed on cooldown
 		else:
 			print("player on cooldown")
 			pygame.sprite.spritecollide(crosshair, obstacle_group, False)
@@ -244,6 +307,7 @@ player = pygame.sprite.GroupSingle()
 player.add(Player())
 obstacle_group = pygame.sprite.Group()
 
+
 def display_score():
 	current_time = int(pygame.time.get_ticks() / 1000) - start_time
 	score_surf = test_font.render(f'Score: {current_time}',False,(255, 255, 255))
@@ -255,8 +319,10 @@ def collision_sprite():
 	if pygame.sprite.spritecollide(player.sprite,obstacle_group,False):
 		obstacle_group.empty()
 		print("Collision")
+		player.update()
 		bg_music = pygame.mixer.Sound('audio/collision.wav')
 		bg_music.play()
+		
 		return False
 	else: 
 		return True
@@ -356,7 +422,9 @@ while True:
 				else:
 					obstacle_group.add(Obstacle(choice(['bee','snake', 'scorpion'])))
 		
-		
+			# if player.health > 0: 
+			# 	screen.blit(player.image, player.rect)
+			# health.render()
 		else:
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE and (new_game_timer == 0 or score == 0) :
 				game_active = True
@@ -385,6 +453,9 @@ while True:
 				bg_images.append(bg_theme_4)
 				theme = 4
 			bg_x = 0
+
+		health_group.draw(screen)
+		health_group.update()
 
 		crosshair_group.draw(screen)
 		crosshair_group.update()
@@ -420,8 +491,11 @@ while True:
 
 		#initilize back to default values
 		bg_x = 0
+
+
 		player.remove()
 		player.add(Player())
+		
 		theme = 1
 		bg_images.clear()
 		bg_images.append(bg_theme_1)

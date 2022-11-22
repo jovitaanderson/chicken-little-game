@@ -12,7 +12,8 @@ Clique: What are you? Chicken?
     </p>
     </div>
 
-## Docs Link: https://docs.google.com/document/d/1uQU_uRdWnVWmneLw8tp_O_J7YKqQmxHO47_jkLpHAX4/edit?usp=sharing
+## For more information about the project: 
+https://docs.google.com/document/d/1uQU_uRdWnVWmneLw8tp_O_J7YKqQmxHO47_jkLpHAX4/edit?usp=sharing
 
 ## Member Information
 

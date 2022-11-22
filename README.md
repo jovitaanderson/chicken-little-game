@@ -10,9 +10,10 @@ Clique: What are you? Chicken?
     <p align="center">
       Our game title named Chicken little is inspired from how we humans always refer to it as a person that fear something.
     </p>
-    </div>
+  </div>
 
-## Docs Link: https://docs.google.com/document/d/1uQU_uRdWnVWmneLw8tp_O_J7YKqQmxHO47_jkLpHAX4/edit?usp=sharing
+## About the project
+https://docs.google.com/document/d/1uQU_uRdWnVWmneLw8tp_O_J7YKqQmxHO47_jkLpHAX4/edit?usp=sharing
 
 ## Member Information
 

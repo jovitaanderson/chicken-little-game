@@ -4,12 +4,9 @@
 <img style="width: 300px; height: 300px;" src="https://img.itch.zone/aW1hZ2UvMTA2MzY1NC82MDg4NzcyLmdpZg==/347x500/00ORFO.gif" alt="chicken_sprite">
 Repository for Game Off 2022 <br>
 Clique: What are you? Chicken?
--- Insert Logo --
   <br/>
   <div>
-    <p align="center">
-      Our game title named Chicken little is inspired from how we humans always refer to it as a person that fear something.
-    </p>
+     Our game title named Chicken little is inspired from how we humans always refer to it as a person that fear something.
   </div>
 
 ## About the project

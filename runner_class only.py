@@ -23,7 +23,7 @@ theme = 1
 
 
 bg_music = pygame.mixer.Sound('audio/music.wav')
-bg_music.set_volume(0.1)
+bg_music.set_volume(0.07)
 bg_music.play(loops = -1)
 
 vec = pygame.math.Vector2
@@ -86,14 +86,13 @@ class Player(pygame.sprite.Sprite):
 		self.player_jump = pygame.transform.scale(pygame.image.load('graphics/player/ChikBoy_jump.png').convert_alpha(),(84, 84))
 		
 		self.player_crouch = pygame.transform.scale(pygame.image.load('graphics/player/ChikBoy_crouch.png').convert_alpha(),(84, 95))
-		self.crouch = False
 
 		self.image = self.player_walk[self.player_index]
 		self.rect = self.image.get_rect(midbottom = (80,SCREEN_HEIGHT - GROUND_HEIGHT))
 		self.gravity = 0
 
 		self.jump_sound = pygame.mixer.Sound('audio/jump.wav')
-		self.jump_sound.set_volume(0.5)
+		self.jump_sound.set_volume(0.08)
 
 		# obstacle audio to be modified
 		self.obstacle_sound = pygame.mixer.Sound('audio/collision.wav')
@@ -126,31 +125,6 @@ class Player(pygame.sprite.Sprite):
 		if (keys[pygame.K_LEFT] or keys[pygame.K_a]) and self.rect.right >= SCREEN_WIDTH * 1/10:
 			print("left detected")
 			self.rect.x -= 2.5
-			
-		# if (keys[pygame.K_DOWN] or keys[pygame.K_s] and self.rect.bottom <= (SCREEN_HEIGHT - GROUND_HEIGHT)):
-		# 	self.crouch = True
-		# 	self.gravity = 10
-		# 	print("crouched detected")
-		
-		#todo: add player crouch movement
-		#for event in pygame.event.get():
-		#	if event.type == pygame.KEYDOWN :
-		#		if event.key == pygame.K_DOWN :
-		#			self.image = pygame.transform.scale(pygame.image.load('graphics/player/ChikBoy_crouch.png').convert_alpha(),(84, 50))
-		#			self.rect = self.image.get_rect(midbottom = (80,SCREEN_HEIGHT - ground_height))
-
-		#	if event.type == pygame.KEYUP :
-		#		if event.key == pygame.K_DOWN :
-		#			self.image = self.player_walk[0]
-		#			self.rect = self.image.get_rect(midbottom = (80,SCREEN_HEIGHT - ground_height))
-
-		#todo: add player crouch movement
-		#if keys[pygame.K_DOWN] and self.rect.bottom == (SCREEN_HEIGHT - ground_height):
-		#	self.image = pygame.transform.scale(pygame.image.load('graphics/player/ChikBoy_crouch.png').convert_alpha(),(84, 50))
-		#	self.rect = self.image.get_rect(midbottom = (80,SCREEN_HEIGHT - ground_height))
-		#elif not keys[pygame.K_DOWN] and self.gravity==0:
-		#	self.image = self.player_walk[0]
-		#	self.rect = self.image.get_rect(midbottom = (80,SCREEN_HEIGHT - ground_height))
 
 	def apply_gravity(self):
 		self.gravity += 1
@@ -162,11 +136,6 @@ class Player(pygame.sprite.Sprite):
 		# player jump
 		if self.rect.bottom < (SCREEN_HEIGHT - GROUND_HEIGHT): 
 			self.image = self.player_jump
-
-		# player crouch
-		elif self.crouch:
-			self.image = self.player_crouch
-			self.crouch = False
 
 		# player walk
 		else:
@@ -260,6 +229,7 @@ class Crosshair(pygame.sprite.Sprite):
 		super().__init__()
 	
 		self.gunshot = pygame.mixer.Sound('audio/shooting.wav')
+		self.gunshot.set_volume(0.1)
 		self.cool_down_count = 0
 		self.image = pygame.image.load('graphics/shooting/crosshair_red_large.png')
 		self.rect = self.image.get_rect()

@@ -59,7 +59,6 @@ class HealthBar(pygame.sprite.Sprite):
 	def update(self):
 		self.takeDamage()
 
-
 #intialise healthbar
 healthbar = HealthBar(400, 90)
 health_group = pygame.sprite.Group()
@@ -74,18 +73,12 @@ class Player(pygame.sprite.Sprite):
 			player_walk_image = pygame.transform.scale(pygame.image.load(f"graphics/player/ChikBoy_run{i}.png").convert_alpha(),(84, 84))
 			self.player_walk.append(player_walk_image)
 
-		self.cooldown = False
-		self.healthbar = HealthBar(400, 90)
-		self.health = 3
-		self.collisions = 0
 		self.health_ani = [pygame.image.load("graphics/heart/heart_0.png").convert_alpha(),
 			pygame.image.load("graphics/heart/heart_1.png").convert_alpha(),
 			pygame.image.load("graphics/heart/heart_2.png").convert_alpha(),
 			pygame.image.load("graphics/heart/heart_3.png").convert_alpha()]
 		self.player_index = 0
 		self.player_jump = pygame.transform.scale(pygame.image.load('graphics/player/ChikBoy_jump.png').convert_alpha(),(84, 84))
-		
-		self.player_crouch = pygame.transform.scale(pygame.image.load('graphics/player/ChikBoy_crouch.png').convert_alpha(),(84, 95))
 
 		self.image = self.player_walk[self.player_index]
 		self.rect = self.image.get_rect(midbottom = (80,SCREEN_HEIGHT - GROUND_HEIGHT))
@@ -94,22 +87,8 @@ class Player(pygame.sprite.Sprite):
 		self.jump_sound = pygame.mixer.Sound('audio/jump.wav')
 		self.jump_sound.set_volume(0.08)
 
-		# obstacle audio to be modified
 		self.obstacle_sound = pygame.mixer.Sound('audio/collision.wav')
 		self.obstacle_sound.set_volume(0.2)
-
-	def player_hit(self):
-		print("player hit")
-		if self.cooldown == False:      
-			self.cooldown = True # Enable the cooldown
-			pygame.time.set_timer(pygame.USEREVENT + 1, 1000) # Resets cooldown in 1 second
-	
-			self.health = self.health - 1
-			health.image = self.health_ani[self.health]
-			
-			if self.health <= 1:
-				self.kill()
-				pygame.display.update()
 
 	def player_input(self):
 		keys = pygame.key.get_pressed()
@@ -229,7 +208,7 @@ class Crosshair(pygame.sprite.Sprite):
 		super().__init__()
 	
 		self.gunshot = pygame.mixer.Sound('audio/shooting.wav')
-		self.gunshot.set_volume(0.1)
+		self.gunshot.set_volume(0.4)
 		self.cool_down_count = 0
 		self.image = pygame.image.load('graphics/shooting/crosshair_red_large.png')
 		self.rect = self.image.get_rect()
@@ -287,11 +266,11 @@ def collision_sprite():
 		print("Collision")
 		player.update()
 		bg_music = pygame.mixer.Sound('audio/collision.wav')
+		bg_music.set_volume(0.5)
 		bg_music.play()
 		return False
 	else: 
 		return True
-
 
 #player idle images
 player_idle = []
@@ -360,7 +339,6 @@ cooldown_timer = pygame.USEREVENT + 2
 pygame.time.set_timer(cooldown_timer, 3000)
 
 #Game loop
-
 while True:
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
@@ -369,7 +347,6 @@ while True:
 
 		if event.type == pygame.MOUSEBUTTONDOWN:
 			crosshair.shoot()
-			# score += 2
 	
 		if game_active:
 			# handle player cooldown
@@ -461,7 +438,7 @@ while True:
 		screen.blit(game_name_surface,game_name_rect)
 		screen.blit(game_name,game_name_rect)
 
-		#initilize back to default values
+		#initialize back to default values
 		bg_x = 0
 		collisions = 0
 

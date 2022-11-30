@@ -1,5 +1,4 @@
 import pygame
-import math
 from sys import exit
 from random import randint, choice
 
@@ -21,7 +20,6 @@ score = 0
 bg_x = 0
 theme = 1
 
-
 bg_music = pygame.mixer.Sound('audio/music.wav')
 bg_music.set_volume(0.07)
 bg_music.play(loops = -1)
@@ -38,10 +36,8 @@ class HealthBar(pygame.sprite.Sprite):
 		self.pos = vec(x,y)
 		self.rect = self.image.get_rect(midbottom = self.pos)
 		
-			
 	def render(self, display):
 		display.blit(self.image, self.pos)
-
 
 	def takeDamage(self):
 		if pygame.sprite.spritecollide(player.sprite,obstacle_group,True):
@@ -93,16 +89,13 @@ class Player(pygame.sprite.Sprite):
 	def player_input(self):
 		keys = pygame.key.get_pressed()
 		if (keys[pygame.K_SPACE] or keys[pygame.K_UP] or keys[pygame.K_w]) and self.rect.bottom >= (SCREEN_HEIGHT - GROUND_HEIGHT):
-			print("jump detected")
 			self.gravity = -20
 			self.jump_sound.play()
 
 		if (keys[pygame.K_RIGHT] or keys[pygame.K_d]) and self.rect.right <= SCREEN_WIDTH - (SCREEN_WIDTH * 1/10):
-			print("right detected")
 			self.rect.x += 2.5
 
 		if (keys[pygame.K_LEFT] or keys[pygame.K_a]) and self.rect.right >= SCREEN_WIDTH * 1/10:
-			print("left detected")
 			self.rect.x -= 2.5
 
 	def apply_gravity(self):
@@ -217,7 +210,6 @@ class Crosshair(pygame.sprite.Sprite):
 	def shoot(self):
 		# if player is not on cooldown
 		if not self.activate_cooldown:
-			print("player shooting")
 			self.gunshot.play()
 			self.cool_down_count = 1
 			self.cool_down()
@@ -225,10 +217,8 @@ class Crosshair(pygame.sprite.Sprite):
 
 		# if player shot 1 time, he or she will be placed on cooldown
 		else:
-			print("player on cooldown")
 			pygame.sprite.spritecollide(crosshair, obstacle_group, False)
 			self.cool_down()
-
 
 	# update position of crosshair to mouse position
 	def update(self):
@@ -253,7 +243,6 @@ player = pygame.sprite.GroupSingle()
 player.add(Player())
 obstacle_group = pygame.sprite.Group()
 
-
 def display_score():
 	current_time = int(pygame.time.get_ticks() / 1000) - start_time
 	score_surf = test_font.render(f'Score: {current_time}',False,(255, 255, 255))
@@ -263,7 +252,6 @@ def display_score():
 
 def collision_sprite():
 	if pygame.sprite.spritecollide(player.sprite,obstacle_group,False):
-		print("Collision")
 		player.update()
 		bg_music = pygame.mixer.Sound('audio/collision.wav')
 		bg_music.set_volume(0.5)
@@ -284,7 +272,6 @@ player_idle_index = 0
 world = []
 for i in range(0,60):
 	world_images = pygame.transform.scale(pygame.image.load(f"graphics/world/frame_{i}_delay-0.34s.png").convert_alpha(),(390, 390))
-	#world_images = pygame.transform.rotozoom(world_images,0,4)
 	world.append(world_images)
 world_index = 0
 
@@ -299,13 +286,11 @@ def gradientRect( window, left_colour, right_colour, target_rect ):
 
 # background themes
 bg_images = []
-
 bg_theme_1 = pygame.transform.scale(pygame.image.load("graphics/background/background_theme1.png").convert_alpha(),(800, 400))
 bg_theme_2 = pygame.transform.scale(pygame.image.load("graphics/background/background_theme2.png").convert_alpha(),(800, 400))
 bg_theme_3 = pygame.transform.scale(pygame.image.load("graphics/background/background_theme3.png").convert_alpha(),(800, 400))
 bg_theme_4 = pygame.transform.scale(pygame.image.load("graphics/background/background_theme4.png").convert_alpha(),(800, 400))
 
-#bg_rect = bg_theme_1.get_rect()
 
 bg_images.append(bg_theme_1)
 bg_images.append(bg_theme_1)
@@ -313,8 +298,6 @@ bg_images.append(bg_theme_1)
 def draw_bg():
 	for x, i in enumerate(bg_images):
 		screen.blit(i, ((x * bg_theme_1.get_width()) + bg_x, 0))
-		#bg_rect.x = x  * bg_theme_1.get_width() + bg_x
-		#pygame.draw.rect(screen, (255,0,0), bg_rect,1)
 
 # Intro screen
 player_stand = pygame.transform.scale(pygame.image.load('graphics/player/ChikBoy_run1.png').convert_alpha(),(84, 84))
@@ -334,7 +317,6 @@ game_message_rect = game_message.get_rect(center = (400,330))
 obstacle_timer = pygame.USEREVENT + 1
 pygame.time.set_timer(obstacle_timer, 1200)
 new_game_timer = 20
-
 cooldown_timer = pygame.USEREVENT + 2
 pygame.time.set_timer(cooldown_timer, 3000)
 

@@ -11,8 +11,8 @@ pygame.init()
 clock = pygame.time.Clock()
 screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
 pygame.display.set_caption('Chicken Little')
-test_font = pygame.font.Font('font/VT323-Regular.ttf', 50)
-title_font = pygame.font.Font('font/VT323-Regular.ttf', 70)
+test_font = pygame.font.Font('data/font/VT323-Regular.ttf', 50)
+title_font = pygame.font.Font('data/font/VT323-Regular.ttf', 70)
 game_active = False
 
 start_time = 0
@@ -20,7 +20,7 @@ score = 0
 bg_x = 0
 theme = 1
 
-bg_music = pygame.mixer.Sound('audio/music.wav')
+bg_music = pygame.mixer.Sound('data/audio/music.wav')
 bg_music.set_volume(0.07)
 bg_music.play(loops = -1)
 
@@ -47,10 +47,10 @@ class HealthBar(pygame.sprite.Sprite):
 		self.image = self.health_ani[self.health]
 
 	def load_animations(self):
-		self.health_ani = [pygame.image.load("graphics/heart/heart_0.png").convert_alpha(),
-			pygame.image.load("graphics/heart/heart_1.png").convert_alpha(),
-			pygame.image.load("graphics/heart/heart_2.png").convert_alpha(),
-			pygame.image.load("graphics/heart/heart_3.png").convert_alpha()]
+		self.health_ani = [pygame.image.load("data/graphics/heart/heart_0.png").convert_alpha(),
+			pygame.image.load("data/graphics/heart/heart_1.png").convert_alpha(),
+			pygame.image.load("data/graphics/heart/heart_2.png").convert_alpha(),
+			pygame.image.load("data/graphics/heart/heart_3.png").convert_alpha()]
 
 	def update(self):
 		self.takeDamage()
@@ -66,24 +66,24 @@ class Player(pygame.sprite.Sprite):
 		#to store character images
 		self.player_walk = []
 		for i in range(1,11):
-			player_walk_image = pygame.transform.scale(pygame.image.load(f"graphics/player/ChikBoy_run{i}.png").convert_alpha(),(84, 84))
+			player_walk_image = pygame.transform.scale(pygame.image.load(f"data/graphics/player/ChikBoy_run{i}.png").convert_alpha(),(84, 84))
 			self.player_walk.append(player_walk_image)
 
-		self.health_ani = [pygame.image.load("graphics/heart/heart_0.png").convert_alpha(),
-			pygame.image.load("graphics/heart/heart_1.png").convert_alpha(),
-			pygame.image.load("graphics/heart/heart_2.png").convert_alpha(),
-			pygame.image.load("graphics/heart/heart_3.png").convert_alpha()]
+		self.health_ani = [pygame.image.load("data/graphics/heart/heart_0.png").convert_alpha(),
+			pygame.image.load("data/graphics/heart/heart_1.png").convert_alpha(),
+			pygame.image.load("data/graphics/heart/heart_2.png").convert_alpha(),
+			pygame.image.load("data/graphics/heart/heart_3.png").convert_alpha()]
 		self.player_index = 0
-		self.player_jump = pygame.transform.scale(pygame.image.load('graphics/player/ChikBoy_jump.png').convert_alpha(),(84, 84))
+		self.player_jump = pygame.transform.scale(pygame.image.load('data/graphics/player/ChikBoy_jump.png').convert_alpha(),(84, 84))
 
 		self.image = self.player_walk[self.player_index]
 		self.rect = self.image.get_rect(midbottom = (80,SCREEN_HEIGHT - GROUND_HEIGHT))
 		self.gravity = 0
 
-		self.jump_sound = pygame.mixer.Sound('audio/jump.wav')
+		self.jump_sound = pygame.mixer.Sound('data/audio/jump.wav')
 		self.jump_sound.set_volume(0.08)
 
-		self.obstacle_sound = pygame.mixer.Sound('audio/collision.wav')
+		self.obstacle_sound = pygame.mixer.Sound('data/audio/collision.wav')
 		self.obstacle_sound.set_volume(0.2)
 
 	def player_input(self):
@@ -132,45 +132,45 @@ class Obstacle(pygame.sprite.Sprite):
 		
 		#map 1 
 		if type == 'fly':
-			fly_1 = pygame.image.load('graphics/fly/fly1.png').convert_alpha()
-			fly_2 = pygame.image.load('graphics/fly/fly2.png').convert_alpha()
+			fly_1 = pygame.image.load('data/graphics/fly/fly1.png').convert_alpha()
+			fly_2 = pygame.image.load('data/graphics/fly/fly2.png').convert_alpha()
 			self.frames = [fly_1,fly_2]
 			y_pos = (SCREEN_HEIGHT - GROUND_HEIGHT) - 90
 		elif type == 'snail':
-			snail_1 = pygame.image.load('graphics/snail/snail1.png').convert_alpha()
-			snail_2 = pygame.image.load('graphics/snail/snail2.png').convert_alpha()
+			snail_1 = pygame.image.load('data/graphics/snail/snail1.png').convert_alpha()
+			snail_2 = pygame.image.load('data/graphics/snail/snail2.png').convert_alpha()
 			self.frames = [snail_1,snail_2]
 			y_pos  = (SCREEN_HEIGHT - GROUND_HEIGHT)
 		#map 2
 		elif type == 'bullet':
-			bullet_1 = pygame.transform.scale(pygame.image.load('graphics/Bullet/Bullet1.png').convert_alpha(),(50, 50))
+			bullet_1 = pygame.transform.scale(pygame.image.load('data/graphics/Bullet/Bullet1.png').convert_alpha(),(50, 50))
 			self.frames = [bullet_1]
 			y_pos = (SCREEN_HEIGHT - GROUND_HEIGHT) - 90
 		elif type == 'slime':
-			slime_1 = pygame.transform.scale(pygame.image.load('graphics/Slime/Slime1.png').convert_alpha(),(50, 50))
-			slime_2 = pygame.transform.scale(pygame.image.load('graphics/Slime/Slime2.png').convert_alpha(),(50, 50))
+			slime_1 = pygame.transform.scale(pygame.image.load('data/graphics/Slime/Slime1.png').convert_alpha(),(50, 50))
+			slime_2 = pygame.transform.scale(pygame.image.load('data/graphics/Slime/Slime2.png').convert_alpha(),(50, 50))
 			self.frames = [slime_1,slime_2]
 			y_pos = (SCREEN_HEIGHT - GROUND_HEIGHT)
 		#map 3
 		elif type == 'fire':
-			fire_1 = pygame.transform.scale(pygame.image.load('graphics/Fire/Fire1.png').convert_alpha(),(50, 50))
-			fire_2 = pygame.transform.scale(pygame.image.load('graphics/Fire/Fire2.png').convert_alpha(),(50, 50))
+			fire_1 = pygame.transform.scale(pygame.image.load('data/graphics/Fire/Fire1.png').convert_alpha(),(50, 50))
+			fire_2 = pygame.transform.scale(pygame.image.load('data/graphics/Fire/Fire2.png').convert_alpha(),(50, 50))
 			self.frames = [fire_1,fire_2]
 			y_pos  = (SCREEN_HEIGHT - GROUND_HEIGHT)
 		#map 4
 		elif type == 'snake':
-			snake_1 = pygame.transform.scale(pygame.image.load('graphics/Snake/Snake1.png').convert_alpha(),(50, 50))
-			snake_2 = pygame.transform.scale(pygame.image.load('graphics/Snake/Snake2.png').convert_alpha(),(50, 50))
+			snake_1 = pygame.transform.scale(pygame.image.load('data/graphics/Snake/Snake1.png').convert_alpha(),(50, 50))
+			snake_2 = pygame.transform.scale(pygame.image.load('data/graphics/Snake/Snake2.png').convert_alpha(),(50, 50))
 			self.frames = [snake_1,snake_2]
 			y_pos  = (SCREEN_HEIGHT - GROUND_HEIGHT) + 5
 		elif type == 'bee':
-			bee_1 = pygame.transform.scale(pygame.image.load('graphics/Bee/Bee1.png').convert_alpha(),(50, 50))
-			bee_2 = pygame.transform.scale(pygame.image.load('graphics/Bee/Bee2.png').convert_alpha(),(50, 50))
+			bee_1 = pygame.transform.scale(pygame.image.load('data/graphics/Bee/Bee1.png').convert_alpha(),(50, 50))
+			bee_2 = pygame.transform.scale(pygame.image.load('data/graphics/Bee/Bee2.png').convert_alpha(),(50, 50))
 			self.frames = [bee_1,bee_2]
 			y_pos  = (SCREEN_HEIGHT - GROUND_HEIGHT) - 90
 		elif type == 'scorpion':
-			scorpion_1 = pygame.transform.scale(pygame.image.load('graphics/Scorpion/Scorpion1.png').convert_alpha(),(50, 50))
-			scorpion_2 = pygame.transform.scale(pygame.image.load('graphics/Scorpion/Scorpion2.png').convert_alpha(),(50, 50))
+			scorpion_1 = pygame.transform.scale(pygame.image.load('data/graphics/Scorpion/Scorpion1.png').convert_alpha(),(50, 50))
+			scorpion_2 = pygame.transform.scale(pygame.image.load('data/graphics/Scorpion/Scorpion2.png').convert_alpha(),(50, 50))
 			self.frames = [scorpion_1,scorpion_2]
 			y_pos  = (SCREEN_HEIGHT - GROUND_HEIGHT)
 
@@ -200,10 +200,10 @@ class Crosshair(pygame.sprite.Sprite):
 	def __init__(self):
 		super().__init__()
 	
-		self.gunshot = pygame.mixer.Sound('audio/shooting.wav')
+		self.gunshot = pygame.mixer.Sound('data/audio/shooting.wav')
 		self.gunshot.set_volume(0.4)
 		self.cool_down_count = 0
-		self.image = pygame.image.load('graphics/shooting/crosshair_red_large.png')
+		self.image = pygame.image.load('data/graphics/shooting/crosshair_red_large.png')
 		self.rect = self.image.get_rect()
 		self.activate_cooldown = False
 
@@ -228,10 +228,10 @@ class Crosshair(pygame.sprite.Sprite):
 	def cool_down(self):
 		if (self.cool_down_count == 1 ):
 			self.activate_cooldown = True
-			self.image = pygame.image.load('graphics/shooting/crosshair_white_large.png')
+			self.image = pygame.image.load('data/graphics/shooting/crosshair_white_large.png')
 
 		else:
-			self.image = pygame.image.load('graphics/shooting/crosshair_red_large.png')
+			self.image = pygame.image.load('data/graphics/shooting/crosshair_red_large.png')
 
 #Crosshair
 crosshair = Crosshair()
@@ -253,7 +253,7 @@ def display_score():
 def collision_sprite():
 	if pygame.sprite.spritecollide(player.sprite,obstacle_group,False):
 		player.update()
-		bg_music = pygame.mixer.Sound('audio/collision.wav')
+		bg_music = pygame.mixer.Sound('data/audio/collision.wav')
 		bg_music.set_volume(0.5)
 		bg_music.play()
 		return False
@@ -263,7 +263,7 @@ def collision_sprite():
 #player idle images
 player_idle = []
 for i in range(1,7):
-	player_idle_image = pygame.transform.scale(pygame.image.load(f"graphics/player/ChikBoy_idle{i}.png").convert_alpha(),(84, 84))
+	player_idle_image = pygame.transform.scale(pygame.image.load(f"data/graphics/player/ChikBoy_idle{i}.png").convert_alpha(),(84, 84))
 	player_idle_image = pygame.transform.rotozoom(player_idle_image,0,2)
 	player_idle.append(player_idle_image)
 player_idle_index = 0
@@ -271,7 +271,7 @@ player_idle_index = 0
 #world images
 world = []
 for i in range(0,60):
-	world_images = pygame.transform.scale(pygame.image.load(f"graphics/world/frame_{i}_delay-0.34s.png").convert_alpha(),(390, 390))
+	world_images = pygame.transform.scale(pygame.image.load(f"data/graphics/world/frame_{i}_delay-0.34s.png").convert_alpha(),(390, 390))
 	world.append(world_images)
 world_index = 0
 
@@ -286,10 +286,10 @@ def gradientRect( window, left_colour, right_colour, target_rect ):
 
 # background themes
 bg_images = []
-bg_theme_1 = pygame.transform.scale(pygame.image.load("graphics/background/background_theme1.png").convert_alpha(),(800, 400))
-bg_theme_2 = pygame.transform.scale(pygame.image.load("graphics/background/background_theme2.png").convert_alpha(),(800, 400))
-bg_theme_3 = pygame.transform.scale(pygame.image.load("graphics/background/background_theme3.png").convert_alpha(),(800, 400))
-bg_theme_4 = pygame.transform.scale(pygame.image.load("graphics/background/background_theme4.png").convert_alpha(),(800, 400))
+bg_theme_1 = pygame.transform.scale(pygame.image.load("data/graphics/background/background_theme1.png").convert_alpha(),(800, 400))
+bg_theme_2 = pygame.transform.scale(pygame.image.load("data/graphics/background/background_theme2.png").convert_alpha(),(800, 400))
+bg_theme_3 = pygame.transform.scale(pygame.image.load("data/graphics/background/background_theme3.png").convert_alpha(),(800, 400))
+bg_theme_4 = pygame.transform.scale(pygame.image.load("data/graphics/background/background_theme4.png").convert_alpha(),(800, 400))
 
 
 bg_images.append(bg_theme_1)
@@ -300,7 +300,7 @@ def draw_bg():
 		screen.blit(i, ((x * bg_theme_1.get_width()) + bg_x, 0))
 
 # Intro screen
-player_stand = pygame.transform.scale(pygame.image.load('graphics/player/ChikBoy_run1.png').convert_alpha(),(84, 84))
+player_stand = pygame.transform.scale(pygame.image.load('data/graphics/player/ChikBoy_run1.png').convert_alpha(),(84, 84))
 player_stand = pygame.transform.rotozoom(player_stand,0,2)
 player_stand_rect = player_stand.get_rect(center = (400,200))
 
@@ -393,7 +393,7 @@ while True:
 
 		if collisions == 3:
 			obstacle_group.empty()
-			bg_music = pygame.mixer.Sound('audio/death.wav')
+			bg_music = pygame.mixer.Sound('data/audio/death.wav')
 			bg_music.set_volume(0.7)
 			bg_music.play()
 			game_active = False

@@ -345,7 +345,7 @@ while True:
 			pygame.quit()
 			exit()
 
-		if event.type == pygame.MOUSEBUTTONDOWN:
+		if event.type == pygame.MOUSEBUTTONDOWN and game_active:
 			crosshair.shoot()
 	
 		if game_active:
@@ -379,13 +379,13 @@ while True:
 		bg_x -= 4 
 		if abs(bg_x)> bg_theme_1.get_width():
 			del bg_images[0]
-			if score < 10:
+			if score < 20:
 				bg_images.append(bg_theme_1)
 				theme = 1
-			elif score < 20:
+			elif score < 40:
 				bg_images.append(bg_theme_2)
 				theme = 2
-			elif score < 30:
+			elif score < 60:
 				bg_images.append(bg_theme_3)
 				theme = 3
 			else:
